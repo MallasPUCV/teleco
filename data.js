@@ -52,7 +52,7 @@ const semesters = {
         { code: "FOFU3", name: "Formacion Fundamental 3", prereq: [], credits: 2 }
     ],
     8: [
-        { code: "EIE303", name: "Redes de Computadores", prereq: ["EIE439"], credits: 4 },
+        { code: "EIE303", name: "Redes de Computadores", prereq: ["EIE302"], credits: 4 },
         { code: "EIE404", name: "Comunicaciones Inalambricas", prereq: ["EIE402"], credits: 4 },
         { code: "EIE407", name: "Comunicaciones Opticas", prereq: ["EIE402"], credits: 4 },
         { code: "EIE408", name: "Laboratorio de Telecomunicaciones", prereq: ["EIE420"], credits: 4 },
