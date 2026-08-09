@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===== CLAVE LOCALSTORAGE TELECO =====
     const STORAGE_KEY = "approvedCourses_TELECO";
 
-    // ===== CLAVE PRACTICA ELA =====
+    // ===== CLAVE PRACTICA TELECO =====
     const PRACTICA_KEY = "practica_aprobada_TELECO";
 
     // ===== CARGAR RAMOS APROBADOS DESDE LOCALSTORAGE =====
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ===== CREAR SWITCH PRACTICA (ARRIBA DERECHA) =====
     const practicaContainer = document.createElement("div");
-    practicaContainer.style.position = "absolute"; // 🔴 CAMBIO AQUÍ (ANTES fixed)
+    practicaContainer.style.position = "absolute";
     practicaContainer.style.top = "20px";
     practicaContainer.style.right = "20px";
     practicaContainer.style.zIndex = "9999";
@@ -145,7 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         approved = approved.filter(c => !toRemove.has(c));
     }
-
     // ===== CÁLCULO DE CRÉDITOS =====
     function calculateApprovedCredits() {
         let total = 0;
@@ -240,6 +239,66 @@ document.addEventListener("DOMContentLoaded", () => {
                     div.classList.add("locked");
                 }
 
+                // ===== FLECHA DE PRERREQUISITOS =====
+                if (course.prereq && course.prereq.length > 0) {
+
+                    const prereqButton = document.createElement("button");
+                    prereqButton.className = "prereq-button";
+                    prereqButton.textContent = "▼";
+                    prereqButton.type = "button";
+
+                    const prereqContainer = document.createElement("div");
+                    prereqContainer.className = "prereq-container";
+                    prereqContainer.style.display = "none";
+
+                    const prereqTitle = document.createElement("div");
+                    prereqTitle.className = "prereq-title";
+                    prereqTitle.textContent = "Prerrequisitos:";
+
+                    prereqContainer.appendChild(prereqTitle);
+
+                    course.prereq.forEach(req => {
+
+                        const prereqCourse = courseMap[req];
+
+                        const prereqItem = document.createElement("div");
+                        prereqItem.className = "prereq-item";
+
+                        const prereqName = prereqCourse
+                            ? `${req} - ${prereqCourse.name}`
+                            : req;
+
+                        prereqItem.textContent = prereqName;
+
+                        if (approved.includes(req)) {
+                            prereqItem.classList.add("prereq-approved");
+                        } else {
+                            prereqItem.classList.add("prereq-not-approved");
+                        }
+
+                        prereqContainer.appendChild(prereqItem);
+                    });
+
+                    prereqButton.addEventListener("click", (event) => {
+                        event.stopPropagation();
+
+                        const abierto =
+                            prereqContainer.style.display === "block";
+
+                        if (abierto) {
+                            prereqContainer.style.display = "none";
+                            prereqButton.textContent = "▼";
+                        } else {
+                            prereqContainer.style.display = "block";
+                            prereqButton.textContent = "▲";
+                        }
+                    });
+
+                    div.appendChild(prereqButton);
+                    div.appendChild(prereqContainer);
+                }
+
+                // ===== CLIC PARA APROBAR / DESAPROBAR =====
                 if (unlocked || approved.includes(course.code)) {
                     div.addEventListener("click", () => {
                         if (approved.includes(course.code)) {
