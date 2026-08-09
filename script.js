@@ -406,19 +406,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             if (abierto) {
 
-                                prereqContainer.style.display =
-                                    "none";
+                            prereqContainer.style.display = "none";
+                             prereqButton.textContent = "▼";
 
-                                prereqButton.textContent =
-                                    "▼";
+                            div.classList.remove("prereq-open");
 
                             } else {
 
-                                prereqContainer.style.display =
-                                    "block";
+                            prereqContainer.style.display = "block";
+                            prereqButton.textContent = "▲";
 
-                                prereqButton.textContent =
-                                    "▲";
+                            div.classList.add("prereq-open");
                             }
                         }
                     );
