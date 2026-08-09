@@ -55,7 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
     practicaSlider.style.left = "0";
     practicaSlider.style.right = "0";
     practicaSlider.style.bottom = "0";
-    practicaSlider.style.backgroundColor = practicaAprobada ? "#2ecc71" : "#e74c3c";
+    practicaSlider.style.backgroundColor =
+        practicaAprobada ? "#2ecc71" : "#e74c3c";
     practicaSlider.style.transition = "0.4s";
     practicaSlider.style.borderRadius = "26px";
 
@@ -78,10 +79,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     practicaInput.addEventListener("change", () => {
         practicaAprobada = practicaInput.checked;
-        localStorage.setItem(PRACTICA_KEY, practicaAprobada);
 
-        practicaSlider.style.backgroundColor = practicaAprobada ? "#2ecc71" : "#e74c3c";
-        practicaCircle.style.left = practicaAprobada ? "26px" : "3px";
+        localStorage.setItem(
+            PRACTICA_KEY,
+            practicaAprobada
+        );
+
+        practicaSlider.style.backgroundColor =
+            practicaAprobada ? "#2ecc71" : "#e74c3c";
+
+        practicaCircle.style.left =
+            practicaAprobada ? "26px" : "3px";
 
         // ===== SI SE DESMARCA LA PRACTICA, QUITAR EIE620 =====
         if (!practicaAprobada && approved.includes("EIE620")) {
@@ -107,9 +115,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ===== LIMPIEZA AUTOMÁTICA (POR SI CAMBIAS DATA) =====
-    approved = approved.filter(code => allCourses.includes(code));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(approved));
+    // ===== LIMPIEZA AUTOMÁTICA =====
+    approved = approved.filter(code =>
+        allCourses.includes(code)
+    );
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(approved)
+    );
 
     // ===== VALIDAR PRERREQUISITOS =====
     function isUnlocked(course) {
@@ -122,7 +136,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return false;
         }
 
-        return course.prereq.every(req => approved.includes(req));
+        return course.prereq.every(req =>
+            approved.includes(req)
+        );
     }
 
     // ===== DESAPROBACIÓN EN CASCADA =====
@@ -131,23 +147,32 @@ document.addEventListener("DOMContentLoaded", () => {
         toRemove.add(code);
 
         let changed = true;
+
         while (changed) {
             changed = false;
 
             approved.forEach(c => {
                 const prereq = courseMap[c]?.prereq || [];
-                if (prereq.some(p => toRemove.has(p)) && !toRemove.has(c)) {
+
+                if (
+                    prereq.some(p => toRemove.has(p)) &&
+                    !toRemove.has(c)
+                ) {
                     toRemove.add(c);
                     changed = true;
                 }
             });
         }
 
-        approved = approved.filter(c => !toRemove.has(c));
+        approved = approved.filter(
+            c => !toRemove.has(c)
+        );
     }
+
     // ===== CÁLCULO DE CRÉDITOS =====
     function calculateApprovedCredits() {
         let total = 0;
+
         for (let sem in semesters) {
             semesters[sem].forEach(course => {
                 if (approved.includes(course.code)) {
@@ -155,33 +180,48 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
+
         return total;
     }
 
     function calculateTotalCredits() {
         let total = 0;
+
         for (let sem in semesters) {
             semesters[sem].forEach(course => {
                 total += Number(course.credits) || 0;
             });
         }
+
         return total;
     }
 
     // ===== ACTUALIZAR PROGRESO =====
     function updateProgress() {
-        const approvedCredits = calculateApprovedCredits();
-        const totalCredits = calculateTotalCredits();
+        const approvedCredits =
+            calculateApprovedCredits();
 
-        const approvedCourses = approved.length;
-        const totalCourses = allCourses.length;
+        const totalCredits =
+            calculateTotalCredits();
 
-        const percent = totalCredits === 0
-            ? 0
-            : ((approvedCredits / totalCredits) * 100).toFixed(1);
+        const approvedCourses =
+            approved.length;
 
-        progressFill.style.width = percent + "%";
-        progressText.textContent = `Progreso: ${percent}%`;
+        const totalCourses =
+            allCourses.length;
+
+        const percent =
+            totalCredits === 0
+                ? 0
+                : ((approvedCredits / totalCredits) * 100)
+                    .toFixed(1);
+
+        progressFill.style.width =
+            percent + "%";
+
+        progressText.textContent =
+            `Progreso: ${percent}%`;
+
         creditsText.innerHTML = `
             Créditos aprobados: ${approvedCredits} / ${totalCredits}<br>
             Ramos aprobados: ${approvedCourses} / ${totalCourses}
@@ -193,127 +233,237 @@ document.addEventListener("DOMContentLoaded", () => {
         grid.innerHTML = "";
 
         for (let sem = 1; sem <= 11; sem++) {
+
             if (!semesters[sem]) continue;
 
-            const semDiv = document.createElement("div");
+            const semDiv =
+                document.createElement("div");
+
             semDiv.className = "semester";
 
-            const title = document.createElement("h2");
+            const title =
+                document.createElement("h2");
+
             title.textContent = `S${sem}`;
+
             semDiv.appendChild(title);
 
             semesters[sem].forEach(course => {
-                const div = document.createElement("div");
+
+                const div =
+                    document.createElement("div");
+
                 div.classList.add("course");
 
-                if (course.code.startsWith("MAT")) div.classList.add("mat");
-                if (course.code.startsWith("EIE")) div.classList.add("eie");
-                if (course.code.startsWith("QUI")) div.classList.add("qui");
-                if (course.code.startsWith("FIS")) div.classList.add("fis");
-                if (course.code.startsWith("ING")) div.classList.add("ing");
-                if (course.code.startsWith("FIN")) div.classList.add("fin");
-                if (course.code.startsWith("DER")) div.classList.add("der");
-                if (course.code.startsWith("EII")) div.classList.add("eii");
+                // ===== COLORES POR SIGLA =====
+                if (course.code.startsWith("MAT"))
+                    div.classList.add("mat");
+
+                if (course.code.startsWith("EIE"))
+                    div.classList.add("eie");
+
+                if (course.code.startsWith("QUI"))
+                    div.classList.add("qui");
+
+                if (course.code.startsWith("FIS"))
+                    div.classList.add("fis");
+
+                if (course.code.startsWith("ING"))
+                    div.classList.add("ing");
+
+                if (course.code.startsWith("FIN"))
+                    div.classList.add("fin");
+
+                if (course.code.startsWith("DER"))
+                    div.classList.add("der");
+
+                if (course.code.startsWith("EII"))
+                    div.classList.add("eii");
 
                 if (
                     course.code.startsWith("ICR") ||
                     course.code.startsWith("IER") ||
                     course.code.startsWith("FOFU")
-                ) div.classList.add("rosado");
+                ) {
+                    div.classList.add("rosado");
+                }
 
-                if (course.code.startsWith("OPT")) div.classList.add("opt");
+                if (course.code.startsWith("OPT"))
+                    div.classList.add("opt");
 
+                // ===== CONTENIDO DEL RAMO =====
                 div.innerHTML = `
                     <strong>${course.code}</strong><br>
                     ${course.name}<br>
                     <small>${course.credits} créditos</small>
                 `;
 
-                const unlocked = isUnlocked(course);
+                const unlocked =
+                    isUnlocked(course);
 
+                // ===== ESTADO DEL RAMO =====
                 if (approved.includes(course.code)) {
                     div.classList.add("approved");
+
                 } else if (unlocked) {
                     div.classList.add("available");
+
                 } else {
                     div.classList.add("locked");
                 }
 
-                // ===== FLECHA DE PRERREQUISITOS =====
-                if (course.prereq && course.prereq.length > 0) {
+                // =================================================
+                // ===== FLECHA Y PRERREQUISITOS ===================
+                // =================================================
 
-                    const prereqButton = document.createElement("button");
-                    prereqButton.className = "prereq-button";
-                    prereqButton.textContent = "▼";
+                if (
+                    course.prereq &&
+                    course.prereq.length > 0
+                ) {
+
+                    // ===== BOTÓN FLECHA =====
+                    const prereqButton =
+                        document.createElement("button");
+
                     prereqButton.type = "button";
+                    prereqButton.className =
+                        "prereq-button";
 
-                    const prereqContainer = document.createElement("div");
-                    prereqContainer.className = "prereq-container";
-                    prereqContainer.style.display = "none";
+                    prereqButton.textContent = "▼";
 
-                    const prereqTitle = document.createElement("div");
-                    prereqTitle.className = "prereq-title";
-                    prereqTitle.textContent = "Prerrequisitos:";
+                    // ===== PANEL =====
+                    const prereqContainer =
+                        document.createElement("div");
 
-                    prereqContainer.appendChild(prereqTitle);
+                    prereqContainer.className =
+                        "prereq-container";
 
+                    // ===== TÍTULO =====
+                    const prereqTitle =
+                        document.createElement("div");
+
+                    prereqTitle.className =
+                        "prereq-title";
+
+                    prereqTitle.textContent =
+                        "Prerrequisitos";
+
+                    prereqContainer.appendChild(
+                        prereqTitle
+                    );
+
+                    // ===== LISTA DE PRERREQUISITOS =====
                     course.prereq.forEach(req => {
 
-                        const prereqCourse = courseMap[req];
+                        const prereqCourse =
+                            courseMap[req];
 
-                        const prereqItem = document.createElement("div");
-                        prereqItem.className = "prereq-item";
+                        const prereqItem =
+                            document.createElement("div");
 
-                        const prereqName = prereqCourse
-                            ? `${req} - ${prereqCourse.name}`
-                            : req;
+                        prereqItem.className =
+                            "prereq-item";
 
-                        prereqItem.textContent = prereqName;
+                        prereqItem.textContent =
+                            prereqCourse
+                                ? `${req} - ${prereqCourse.name}`
+                                : req;
 
+                        // ===== VERDE / ROJO =====
                         if (approved.includes(req)) {
-                            prereqItem.classList.add("prereq-approved");
+
+                            prereqItem.classList.add(
+                                "prereq-approved"
+                            );
+
                         } else {
-                            prereqItem.classList.add("prereq-not-approved");
+
+                            prereqItem.classList.add(
+                                "prereq-not-approved"
+                            );
                         }
 
-                        prereqContainer.appendChild(prereqItem);
+                        prereqContainer.appendChild(
+                            prereqItem
+                        );
                     });
 
-                    prereqButton.addEventListener("click", (event) => {
-                        event.stopPropagation();
+                    // ===== OCULTO INICIALMENTE =====
+                    prereqContainer.style.display =
+                        "none";
 
-                        const abierto =
-                            prereqContainer.style.display === "block";
+                    // ===== ABRIR / CERRAR =====
+                    prereqButton.addEventListener(
+                        "click",
+                        (event) => {
 
-                        if (abierto) {
-                            prereqContainer.style.display = "none";
-                            prereqButton.textContent = "▼";
-                        } else {
-                            prereqContainer.style.display = "block";
-                            prereqButton.textContent = "▲";
+                            event.preventDefault();
+                            event.stopPropagation();
+
+                            const abierto =
+                                prereqContainer.style.display ===
+                                "block";
+
+                            if (abierto) {
+
+                                prereqContainer.style.display =
+                                    "none";
+
+                                prereqButton.textContent =
+                                    "▼";
+
+                            } else {
+
+                                prereqContainer.style.display =
+                                    "block";
+
+                                prereqButton.textContent =
+                                    "▲";
+                            }
                         }
-                    });
+                    );
 
                     div.appendChild(prereqButton);
                     div.appendChild(prereqContainer);
                 }
 
-                // ===== CLIC PARA APROBAR / DESAPROBAR =====
-                if (unlocked || approved.includes(course.code)) {
-                    div.addEventListener("click", () => {
-                        if (approved.includes(course.code)) {
-                            removeWithDependents(course.code);
-                        } else {
-                            approved.push(course.code);
+                // ===== CLIC NORMAL DEL RAMO =====
+                if (
+                    unlocked ||
+                    approved.includes(course.code)
+                ) {
+
+                    div.addEventListener(
+                        "click",
+                        () => {
+
+                            if (
+                                approved.includes(
+                                    course.code
+                                )
+                            ) {
+
+                                removeWithDependents(
+                                    course.code
+                                );
+
+                            } else {
+
+                                approved.push(
+                                    course.code
+                                );
+                            }
+
+                            localStorage.setItem(
+                                STORAGE_KEY,
+                                JSON.stringify(
+                                    approved
+                                )
+                            );
+
+                            render();
                         }
-
-                        localStorage.setItem(
-                            STORAGE_KEY,
-                            JSON.stringify(approved)
-                        );
-
-                        render();
-                    });
+                    );
                 }
 
                 semDiv.appendChild(div);
