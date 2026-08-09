@@ -436,3 +436,14 @@ h1 {
 .prereq-not-approved {
     color: #e74c3c;
 }
+/* ===== RAMO CON PRERREQUISITOS ABIERTO ===== */
+
+.course.prereq-open {
+    z-index: 1000 !important;
+}
+
+/* ===== PANEL DE PRERREQUISITOS ===== */
+
+.prereq-container {
+    z-index: 2000 !important;
+}
